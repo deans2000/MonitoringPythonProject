@@ -1,16 +1,17 @@
 from Poarta1 import *
+i=0
+while i<5:
+    id=int(input('Introduceti id-ul: '))
+    sens=input('Introcueti sensul: ')
+    nrPoarta=int(input('Introduceti numarul portii: '))
 
-# Creating instances
-Dean = Poarta1(1, 'in')
-Mihai = Poarta1(2, 'in')
-Dean2 = Poarta1(1, 'out')
-Mihai2 = Poarta1(2, 'out')
+    if nrPoarta==1:
+        angajat=Poarta1(id,sens)
+        angajat.valideazaCard()
+        print('Cardul a fost validat!')
+    else:
+        print('Poarta introdusa nu exista!')
 
-# Collecting entries
-Dean.salvareDate()
-Mihai.salvareDate()
-Dean2.salvareDate()
-Mihai2.salvareDate()
+    i+=1
+    
 
-# Save all entries to files
-Poarta1.save_all_entries()

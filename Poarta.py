@@ -6,6 +6,6 @@ class Poarta(ABC):
         self.sens=sens
 
     @abstractmethod
-    def salvareDate(self):
+    def valideazaCard(self):
         pass
     
