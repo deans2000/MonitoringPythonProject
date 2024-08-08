@@ -385,6 +385,7 @@ FodyWeavers.xsd
 *.code-workspace
 
 !backup_intrari/
+proiectPython2024Venv/
 
 # Local History for Visual Studio Code
 .history/

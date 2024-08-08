@@ -1,17 +1,13 @@
 from Poarta1 import *
-i=0
-while i<5:
-    id=int(input('Introduceti id-ul: '))
-    sens=input('Introcueti sensul: ')
-    nrPoarta=int(input('Introduceti numarul portii: '))
+import os
+import time
 
-    if nrPoarta==1:
-        angajat=Poarta1(id,sens)
-        angajat.valideazaCard()
-        print('Cardul a fost validat!')
-    else:
-        print('Poarta introdusa nu exista!')
-
-    i+=1
+while True:
+    if len(os.listdir('Tema/MonitoringPythonProject/intrari'))>0:
+        if os.listdir('Tema/MonitoringPythonProject/intrari')[0]=='Poarta1.txt':
+            angajat=Poarta1()
+            angajat.valideazaCard()
+            angajat.salveazaDateBackup()
+            angajat.stergeFisier()
     
-
+    time.sleep(2)
