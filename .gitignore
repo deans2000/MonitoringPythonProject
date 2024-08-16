@@ -385,6 +385,7 @@ FodyWeavers.xsd
 *.code-workspace
 
 !backup_intrari/
+!intrari/
 myvenv/
 
 # Local History for Visual Studio Code
