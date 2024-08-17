@@ -1,13 +1,18 @@
 from Poarta1 import *
-import os
-import time
 from flask import Flask, request, render_template, redirect, url_for, flash
 from MySqlConn import *
 from werkzeug.utils import secure_filename
+from datetime import datetime
+from Passwords import *
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import os
+import time
 import threading
 import csv
 import copy
 import requests
+import smtplib, ssl
 
 app = Flask(__name__)
 secret_key = os.urandom(24).hex()
@@ -17,17 +22,108 @@ mysqlConn = MySqlConn()
 
 def partea1():
     while True:
-        if len(os.listdir('Tema/MonitoringPythonProject/intrari')) > 0:
-            if os.listdir('Tema/MonitoringPythonProject/intrari')[0] == 'Poarta1.txt':
+        if len(os.listdir('intrari')) > 0:
+            if os.listdir('intrari')[0] == 'Poarta1.txt':
                 angajat = Poarta1()
                 angajat.valideazaCard()
                 angajat.salveazaDateBackup()
                 angajat.stergeFisier()
         
         time.sleep(2)
+        def send_email(manager_email, email_content):
+            subject = "Employees Who Worked Less Than 8 Hours"
+            body = f"Dear manager,\n\nThe following employees worked less than 8 hours today:\n\n{email_content}\nPlease take necessary actions.\n\nBest regards,\nYour Monitoring System"
 
-UPLOAD_FOLDER = 'Tema/MonitoringPythonProject/intrari'
-BACKUP_FOLDER = 'Tema/MonitoringPythonProject/backup_intrari'
+            sender_email = "xenox0123@gmail.com"
+            password = emailPassword
+
+            msg = MIMEMultipart()
+            msg['From'] = sender_email
+            msg['To'] = manager_email
+            msg['Subject'] = subject
+
+            msg.attach(MIMEText(body, 'plain'))
+
+            context = ssl.create_default_context()
+
+            with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+                server.login(sender_email, password)
+                server.sendmail(sender_email, manager_email, msg.as_string())
+
+            print(f'Email sent to {manager_email}!')
+
+        if "20:00:00" <= datetime.now().strftime("%H:%M:%S") <= "20:00:05":
+            query = """
+                    SELECT a.Nume, a.Prenume, acc.data, acc.sens, acc.idPoarta, a.IdManager
+                    FROM angajati a
+                    JOIN access acc ON a.ID = acc.idAngajat
+                    WHERE a.IdManager IS NOT NULL
+                    ORDER BY a.ID, acc.data LIMIT 100;
+                    """
+            result=mysqlConn.select(query)
+
+            employee_data = {}
+
+            for record in result:
+                name = f"{record[0]} {record[1]}"
+                date_str = record[2].split("T")[0]
+                timestamp = datetime.strptime(record[2], "%Y-%m-%dT%H:%M:%S.%fZ")
+                sens = record[3]
+                manager_id = record[5]
+
+                if manager_id not in employee_data:
+                    employee_data[manager_id] = {}
+
+                if name not in employee_data[manager_id]:
+                    employee_data[manager_id][name] = {}
+
+                if date_str not in employee_data[manager_id][name]:
+                    employee_data[manager_id][name][date_str] = []
+
+                employee_data[manager_id][name][date_str].append((timestamp, sens))
+
+            manager_emails = {
+                1: "deanslatinat@yahoo.com",
+            }
+            for manager_id, employees in employee_data.items():
+                email_content = ""
+                results = []
+                for employee, dates in employees.items():
+                    for date_str, times in dates.items():
+                        total_seconds = 0
+                        in_time = None
+
+                        for timestamp, sens in times:
+                            if sens == "in":
+                                in_time = timestamp
+                            elif sens == "out" and in_time:
+                                total_seconds += (timestamp - in_time).total_seconds()
+                                in_time = None
+
+                        hours_worked = total_seconds / 3600
+
+                        if hours_worked < 8:
+                            results.append((employee, date_str, hours_worked))
+
+                if results:
+                        csv_filename = f'backup_intrari/{datetime.now().strftime("%Y-%m-%dT%H-%M-%S-%fZ")}_idManager_{manager_id}_chiulangii.csv'
+                        txt_filename = f'backup_intrari/{datetime.now().strftime("%Y-%m-%dT%H-%M-%S-%fZ")}_idManager_{manager_id}_chiulangii.txt'
+
+                        with open(csv_filename, 'w', newline='') as csvfile, open(txt_filename, 'w') as txtfile:
+                            csvwriter = csv.writer(csvfile)
+                            csvwriter.writerow(['Nume', 'Data', 'OreLucrate'])
+
+                            for employee, date_str, hours_worked in results:
+                                csvwriter.writerow([employee, date_str, hours_worked])
+                                txtfile.write(f"{employee},{date_str},{hours_worked}\n")
+                                email_content += f"{employee} on {date_str}: {hours_worked:.2f} hours\n"
+
+                        if email_content and manager_id in manager_emails:
+                            send_email(manager_emails[manager_id], email_content)
+            query="DELETE FROM access"
+            mysqlConn.delete(query)
+UPLOAD_FOLDER = 'intrari'
+BACKUP_FOLDER = 'backup_intrari'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/')
@@ -101,7 +197,7 @@ def process_file(file_path):
     backup_file(file_path)
 
 def backup_file(file_path):
-    timeStamp = datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S-%fZ")
+    timeStamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S-%fZ")
     filename = os.path.basename(file_path)
     backup_file_path = os.path.join(BACKUP_FOLDER, f'{filename}_{timeStamp}.csv')
 

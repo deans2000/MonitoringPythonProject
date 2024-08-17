@@ -6,7 +6,7 @@ import os
 class Poarta1(Poarta):
 
     def valideazaCard(self):
-        filePath='Tema/MonitoringPythonProject/intrari/Poarta1.txt'
+        filePath='intrari/Poarta1.txt'
         mysqlConn = MySqlConn()
         with open(filePath,'r') as file:
             for line in file:
@@ -19,9 +19,9 @@ class Poarta1(Poarta):
 
     def salveazaDateBackup(self):
         # Write all entries to the backup file
-        filePath='Tema/MonitoringPythonProject/intrari/Poarta1.txt'
+        filePath='intrari/Poarta1.txt'
         timeStamp=datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S-%fZ")
-        backup_folder = 'Tema/MonitoringPythonProject/backup_intrari'
+        backup_folder = 'backup_intrari'
         backup_file_path = os.path.join(backup_folder, f'Poarta1_backup_{timeStamp}.txt')
         with open(filePath, 'r') as original_file:
             with open(backup_file_path, 'w') as backup_file:
@@ -29,7 +29,7 @@ class Poarta1(Poarta):
         print('Date salvate in backup!')
 
     def stergeFisier(self):
-        folder = 'Tema/MonitoringPythonProject/intrari'
+        folder = 'intrari'
         file_path = os.path.join(folder, 'Poarta1.txt')
         os.remove(file_path)
         print('Fisier sters!')

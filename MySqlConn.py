@@ -7,7 +7,15 @@ class MySqlConn():
                                           database='monitoringpythonproject')
         self.cursor=self.mydb.cursor()
 
+    def select(self,query):
+        self.cursor.execute(query)
+        return self.cursor.fetchall()
+
     def insert(self,query):
+        self.cursor.execute(query)
+        self.mydb.commit()
+
+    def delete(self,query):
         self.cursor.execute(query)
         self.mydb.commit()
 
