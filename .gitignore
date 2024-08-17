@@ -387,6 +387,7 @@ FodyWeavers.xsd
 !backup_intrari/
 !intrari/
 myvenv/
+Passwords.py
 
 # Local History for Visual Studio Code
 .history/
