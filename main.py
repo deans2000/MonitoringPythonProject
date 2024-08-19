@@ -13,6 +13,7 @@ import csv
 import copy
 import requests
 import smtplib, ssl
+import json
 
 app = Flask(__name__)
 secret_key = os.urandom(24).hex()
@@ -138,6 +139,10 @@ def insert():
 def upload():
     return render_template('upload.html')
 
+@app.route('/stats')
+def stats():
+    return render_template('enter_manager_id.html')
+
 @app.route('/employee', methods=['POST'])
 def addPerson():
     inputs = request.form
@@ -226,6 +231,74 @@ def poarta2():
     mysqlConn.insert(query)
     
     return "Entry added successfully", 200
+
+@app.route('/view_stats', methods=['POST'])
+def view_stats():
+    # Re-initialize MySqlConn to ensure a fresh connection
+    mysqlConn = MySqlConn()
+
+    manager_id = request.form['ManagerID']
+
+    query = f"""
+            SELECT a.Nume, a.Prenume, acc.data, acc.sens, acc.idPoarta
+            FROM angajati a
+            JOIN access acc ON a.ID = acc.idAngajat
+            WHERE a.IdManager = {manager_id}
+            ORDER BY a.ID, acc.data;
+            """
+    result = mysqlConn.select(query)
+
+    if not result:
+        return render_template('view_stats.html', error="No data available.")
+
+    employee_data = {}
+
+    for record in result:
+        name = f"{record[0]} {record[1]}"
+        date_str = record[2].split("T")[0]
+        timestamp = datetime.strptime(record[2], "%Y-%m-%dT%H:%M:%S.%fZ")
+        sens = record[3]
+
+        if name not in employee_data:
+            employee_data[name] = {}
+
+        if date_str not in employee_data[name]:
+            employee_data[name][date_str] = []
+
+        employee_data[name][date_str].append((timestamp, sens))
+
+    chart_data = {
+        'labels': [],
+        'datasets': [{
+            'label': 'Hours Worked',
+            'data': [],
+            'backgroundColor': 'rgba(75, 192, 192, 0.2)',
+            'borderColor': 'rgba(75, 192, 192, 1)',
+            'borderWidth': 1
+        }]
+    }
+
+    for employee, dates in employee_data.items():
+        for date_str, times in dates.items():
+            total_seconds = 0
+            in_time = None
+
+            for timestamp, sens in times:
+                if sens == "in":
+                    in_time = timestamp
+                elif sens == "out" and in_time:
+                    total_seconds += (timestamp - in_time).total_seconds()
+                    in_time = None
+
+            hours_worked = total_seconds / 3600
+            chart_data['labels'].append(f"{employee} on {date_str}")
+            chart_data['datasets'][0]['data'].append(hours_worked)
+
+    # Convert the chart_data dictionary to a JSON string
+    chart_data_json = json.dumps(chart_data)
+
+    # Pass the JSON string to the template
+    return render_template('view_stats.html', chart_data=chart_data_json)
 
 def partea2():
     app.run(host="0.0.0.0", port=5000)
