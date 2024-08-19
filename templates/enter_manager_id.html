@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Enter Manager ID</title>
     <style>
         body {
             display: flex;
@@ -34,24 +34,14 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        .button {
-            display: inline-block;
-            padding: 10px 20px;
-            font-size: 16px;
-            color: white;
-            background-color: #007BFF;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-        }
     </style>
 </head>
 <body>
     <div class="form-container">
-    <a href="/addEmployee" class="button">Add employee!</a>
-    <a href="/uploadFile" class="button" style="margin-top:20px">Add data!</a>
-    <a href="/stats" class="button" style="margin-top:20px">See stats!</a>
-</div>
+        <form action="/view_stats" method="POST">
+            <input type="number" id="manager_id" name="ManagerID" placeholder="Enter Manager ID" required>
+            <button type="submit">View Stats</button>
+        </form>
+    </div>
 </body>
 </html>
