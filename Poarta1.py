@@ -18,7 +18,7 @@ class Poarta1(Poarta):
         print('Card validat!')
 
     def salveazaDateBackup(self):
-        # Write all entries to the backup file
+        # Writing all entries to the backup file
         filePath='intrari/Poarta1.txt'
         timeStamp=datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S-%fZ")
         backup_folder = 'backup_intrari'

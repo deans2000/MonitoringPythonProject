@@ -3,55 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Home - Monitoring System</title>
     <style>
         body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
+            color: #333;
         }
-        .form-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+            width: 350px;
         }
-        .form-container form {
-            display: flex;
-            flex-direction: column;
-            width: 220px;
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            color: #333;
         }
-        .form-container input, .form-container button {
-            margin-bottom: 10px;
-            padding: 10px;
+
+        p {
+            margin-bottom: 30px;
             font-size: 16px;
+            color: #666;
         }
-        .form-container button {
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .button {
+
+        .btn {
             display: inline-block;
-            padding: 10px 20px;
-            font-size: 16px;
-            color: white;
-            background-color: #007BFF;
+            background-color: #007bff;
+            color: #fff;
+            padding: 15px 30px;
+            margin: 10px 0;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             text-decoration: none;
+            font-size: 18px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
     </style>
 </head>
 <body>
-    <div class="form-container">
-    <a href="/addEmployee" class="button">Add employee!</a>
-    <a href="/uploadFile" class="button" style="margin-top:20px">Add data!</a>
-    <a href="/stats" class="button" style="margin-top:20px">See stats!</a>
-</div>
+    <div class="container">
+        <h1>Welcome to the Monitoring System</h1>
+        <p>Please select an action below to get started:</p>
+        <div class="btn-container">
+            <a href="/addEmployee" class="btn">Add New Employee</a>
+            <a href="/uploadFile" class="btn">Upload Data</a>
+            <a href="/stats" class="btn">View Statistics</a>
+        </div>
+    </div>
 </body>
 </html>

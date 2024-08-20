@@ -13,7 +13,6 @@ import csv
 import copy
 import requests
 import smtplib, ssl
-import json
 
 app = Flask(__name__)
 secret_key = os.urandom(24).hex()
@@ -192,13 +191,13 @@ def process_file(file_path):
             dictionarNou["sens"] = sens
             dictionarNou["idPersoana"] = idAngajat_str
 
-            # Send the JSON data to the Flask route
+            # Sending the JSON data to the Flask route
             response = requests.post('http://localhost:5000/poarta2', json=dictionarNou)
             
             if response.status_code != 200:
                 print(f"Failed to add entry for {idAngajat_str}. Server responded with: {response.status_code}")
 
-    # Backup the CSV file
+    # Backing up the CSV file
     backup_file(file_path)
 
 def backup_file(file_path):
@@ -212,7 +211,7 @@ def backup_file(file_path):
 
     print(f"File backed up as {backup_file_path}")
 
-    # Delete the original file after backup
+    # Deleting the original file after backup
     os.remove(file_path)
 
 @app.route('/poarta2', methods=['POST'])
@@ -221,24 +220,32 @@ def poarta2():
     if not data:
         return "No data provided", 400
 
-    # Construct the SQL query
+    # Constructing the SQL query
     query = f"""
     INSERT INTO access 
     VALUES ('{data['data']}', '{data['sens']}', {data['idPersoana']}, {data['idPoarta']}, 'Poarta 2')
     """
 
-    # Execute the query
+    # Executing the query
     mysqlConn.insert(query)
     
     return "Entry added successfully", 200
 
 @app.route('/view_stats', methods=['POST'])
 def view_stats():
-    # Re-initialize MySqlConn to ensure a fresh connection
+    # Re-initializing MySqlConn to ensure a fresh connection
     mysqlConn = MySqlConn()
-
     manager_id = request.form['ManagerID']
 
+    # Checking if the manager ID exists in the database
+    query_manager_check = f"SELECT COUNT(*) FROM angajati WHERE IdManager = {manager_id}"
+    manager_exists = mysqlConn.select(query_manager_check)[0][0]
+
+    if not manager_exists:
+        message = "The provided ID does not exist."
+        return render_template('view_stats.html', chart_data=None, message=message)
+
+    # Fetching data for the given manager ID
     query = f"""
             SELECT a.Nume, a.Prenume, acc.data, acc.sens, acc.idPoarta
             FROM angajati a
@@ -247,9 +254,6 @@ def view_stats():
             ORDER BY a.ID, acc.data;
             """
     result = mysqlConn.select(query)
-
-    if not result:
-        return render_template('view_stats.html', error="No data available.")
 
     employee_data = {}
 
@@ -294,11 +298,13 @@ def view_stats():
             chart_data['labels'].append(f"{employee} on {date_str}")
             chart_data['datasets'][0]['data'].append(hours_worked)
 
-    # Convert the chart_data dictionary to a JSON string
-    chart_data_json = json.dumps(chart_data)
+    if not chart_data['labels']:
+        message = "No data available."
+        return render_template('view_stats.html', chart_data=None, message=message)
 
-    # Pass the JSON string to the template
-    return render_template('view_stats.html', chart_data=chart_data_json)
+    return render_template('view_stats.html', chart_data=chart_data)
+
+
 
 def partea2():
     app.run(host="0.0.0.0", port=5000)

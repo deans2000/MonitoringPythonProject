@@ -3,48 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add employee</title>
+    <title>Add Employee</title>
     <style>
         body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
+            color: #333;
         }
-        .form-container {
+
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #007bff;
+        }
+
+        form {
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-        .form-container form {
-            display: flex;
-            flex-direction: column;
-            width: 220px;
-        }
-        .form-container input, .form-container button {
-            margin-bottom: 10px;
+
+        input[type="text"] {
+            width: 100%;
             padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
             font-size: 16px;
         }
-        .form-container button {
-            background-color: #007BFF;
-            color: white;
+
+        input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 0;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
+            width: 100%;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
     </style>
 </head>
 <body>
-    <div class="form-container">
+    <div class="container">
+        <h1>Add New Employee</h1>
         <form action="http://localhost:5000/employee" method="POST">
-            <input type="text" id="nume" name="Nume" placeholder="Nume" required>
-            <input type="text" id="prenume" name="Prenume" placeholder="Prenume" required>
-            <input type="text" id="companie" name="Companie" placeholder="Companie" required>
-            <input type="number" id="idmanager" name="IdManager" placeholder="IdManager">
-            <button type="submit">Submit</button>
+            <input type="text" name="Nume" placeholder="Nume" required>
+            <input type="text" name="Prenume" placeholder="Prenume" required>
+            <input type="text" name="Companie" placeholder="Companie" required>
+            <input type="text" name="IdManager" placeholder="IdManager">
+            <input type="submit" value="Submit">
         </form>
     </div>
 </body>
