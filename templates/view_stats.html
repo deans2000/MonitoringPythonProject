@@ -4,34 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manager Stats</title>
-    <!-- Include Chart.js -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 600px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #007BFF;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .no-data {
+            font-size: 18px;
+            color: #ff0000;
+        }
+    </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <h2>Manager Stats</h2>
-
-    {% if error %}
-        <p style="color: red;">{{ error }}</p>
-    {% else %}
-        <canvas id="myChart" width="400" height="200"></canvas>
-        <script>
-            var ctx = document.getElementById('myChart').getContext('2d');
-            var chartData = JSON.parse('{{ chart_data | safe }}'); 
-            var myChart = new Chart(ctx, {
-                type: 'bar',
-                data: chartData,
-                options: {
-                    scales: {
-                        x: {
-                            beginAtZero: true
-                        },
-                        y: {
-                            beginAtZero: true
+    <div class="container">
+        <h2>Manager Stats</h2>
+        {% if message %}
+            <p class="no-data">{{ message }}</p>
+        {% else %}
+            <canvas id="myChart"></canvas>
+            <script>
+                var ctx = document.getElementById('myChart').getContext('2d');
+                var chartData = JSON.parse('{{ chart_data | tojson | safe }}');
+                var myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: chartData,
+                    options: {
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                            },
+                            y: {
+                                beginAtZero: true,
+                            }
                         }
                     }
-                }
-            });
-        </script>
-    {% endif %}
+                });
+            </script>
+        {% endif %}
+    </div>
 </body>
 </html>

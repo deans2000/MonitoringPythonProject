@@ -6,40 +6,62 @@
     <title>Enter Manager ID</title>
     <style>
         body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
+            color: #333;
         }
-        .form-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 400px;
         }
-        .form-container form {
-            display: flex;
-            flex-direction: column;
-            width: 220px;
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
         }
-        .form-container input, .form-container button {
-            margin-bottom: 10px;
+
+        input[type="text"] {
+            margin: 20px 0;
             padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
             font-size: 16px;
         }
-        .form-container button {
+
+        button {
             background-color: #007BFF;
             color: white;
             border: none;
+            padding: 12px 20px;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-    <div class="form-container">
-        <form action="/view_stats" method="POST">
-            <input type="number" id="manager_id" name="ManagerID" placeholder="Enter Manager ID" required>
+    <div class="container">
+        <h1>Enter Manager ID</h1>
+        <form action="/view_stats" method="post">
+            <input type="text" name="ManagerID" placeholder="Enter Manager ID" required>
             <button type="submit">View Stats</button>
         </form>
     </div>
