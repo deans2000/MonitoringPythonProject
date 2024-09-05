@@ -6,6 +6,7 @@ import os
 class Poarta1(Poarta):
 
     def valideazaCard(self):
+        """Functie abstracta care citeste datele primite din fisierul Poarta1.txt si le incarca in baza de date"""
         filePath='intrari/Poarta1.txt'
         mysqlConn = MySqlConn()
         with open(filePath,'r') as file:
@@ -18,6 +19,7 @@ class Poarta1(Poarta):
         print('Card validat!')
 
     def salveazaDateBackup(self):
+        """Functia salveaza datele citite din Poarta1.txt in folderul de backup"""
         # Writing all entries to the backup file
         filePath='intrari/Poarta1.txt'
         timeStamp=datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S-%fZ")
@@ -29,6 +31,7 @@ class Poarta1(Poarta):
         print('Date salvate in backup!')
 
     def stergeFisier(self):
+        """Functia sterge fisierul Poarta1.txt din folderul intrari"""
         folder = 'intrari'
         file_path = os.path.join(folder, 'Poarta1.txt')
         os.remove(file_path)
