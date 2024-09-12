@@ -3,11 +3,12 @@ from Poarta import *
 from MySqlConn import *
 import os
 
+filePath='intrari/Poarta1.txt'
+
 class Poarta1(Poarta):
 
     def valideazaCard(self):
         """Functie abstracta care citeste datele primite din fisierul Poarta1.txt si le incarca in baza de date"""
-        filePath='intrari/Poarta1.txt'
         mysqlConn = MySqlConn()
         with open(filePath,'r') as file:
             for line in file:
@@ -21,7 +22,6 @@ class Poarta1(Poarta):
     def salveazaDateBackup(self):
         """Functia salveaza datele citite din Poarta1.txt in folderul de backup"""
         # Writing all entries to the backup file
-        filePath='intrari/Poarta1.txt'
         timeStamp=datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S-%fZ")
         backup_folder = 'backup_intrari'
         backup_file_path = os.path.join(backup_folder, f'Poarta1_backup_{timeStamp}.txt')
